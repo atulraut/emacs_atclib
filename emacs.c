@@ -6,7 +6,8 @@
 
 ;; where my elisp stuff is
 (setq load-path (cons "D:/emacs-23.3/site-lisp" load-path))
-
+(require 'xcscope)
+ 
 ;; syntax highlighting
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
