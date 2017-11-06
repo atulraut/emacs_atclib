@@ -1,13 +1,25 @@
-;; Atul's .emacs
-
+;; Atul's emacs
 ;; make it easy on eyes first ...
 (set-foreground-color "gray")
 (set-background-color "black")
 
+(require 'xcscope)
+
 ;; where my elisp stuff is
 (setq load-path (cons "D:/emacs-23.3/site-lisp" load-path))
-(require 'xcscope)
- 
+
+(defun load-directory (dir)
+        (let ((load-it (lambda (f)
+				(load-file (concat (file-name-as-directory dir) f)))
+				))
+		(mapc load-it (directory-files dir nil "\\.el$"))))
+    (load-directory "~/home/atul/bin/")
+(load "/home/atul/bin/tbemail.el")
+
+(load "/home/atul/bin/tbemail.el")
+
+(load "/home/atul/.emacs.d/init.el")
+
 ;; syntax highlighting
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
@@ -23,6 +35,26 @@
 (scroll-bar-mode nil)
 (tool-bar-mode nil)
 (menu-bar-mode nil)
+
+(add-hook 'c-mode-common-hook
+	      (lambda ()
+		      (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+			  (ggtags-mode 1))))
+
+(require 'package)
+(add-to-list 'package-archives
+	            '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+(add-hook 'c-mode-common-hook
+	      (lambda ()
+		      (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+			  (ggtags-mode 1))))
+
+
+(add-hook 'dired-mode-hook 'ggtags-mode)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
 
 ;; save and restore my buffers every time
 (desktop-save-mode 1)
@@ -129,3 +161,63 @@ directory to make multiple eshell windows easier."
   (eshell-send-input)
   (delete-window))	
 (put 'upcase-region 'disabled nil)
+
+;;https://truongtx.me/2013/03/10/ecb-emacs-code-browser
+;;https://truongtx.me/2013/01/07/emacs-package-manager
+(require 'package)
+(dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
+		                    ("elpa" . "http://tromey.com/elpa/")
+              ;; TODO: Maybe, use this after emacs24 is released
+	      ;;                   ;; (development versions of packages)
+                     ("melpa" . "http://melpa.milkbox.net/packages/")
+                                                       ))
+        (add-to-list 'package-archives source t))
+(package-initialize)
+
+(require 'ecb)
+(require 'ecb-autoloads)
+
+(setq ecb-layout-name "left3")
+
+(setq ecb-show-sources-in-directories-buffer 'always)
+
+(setq ecb-compile-window-height 12)
+;;; activate and deactivate ecb
+(global-set-key (kbd "C-x C-;") 'ecb-activate)
+(global-set-key (kbd "C-x C-'") 'ecb-deactivate)
+;;; show/hide ecb window
+(global-set-key (kbd "C-;") 'ecb-show-ecb-windows)
+(global-set-key (kbd "C-'") 'ecb-hide-ecb-windows)
+;;; quick navigation between ecb windows
+(global-set-key (kbd "C-)") 'ecb-goto-window-edit1)
+(global-set-key (kbd "C-!") 'ecb-goto-window-directories)
+(global-set-key (kbd "C-@") 'ecb-goto-window-sources)
+(global-set-key (kbd "C-#") 'ecb-goto-window-methods)
+(global-set-key (kbd "C-$") 'ecb-goto-window-compilation)
+
+;;; replacement for built-in ecb-deactive, ecb-hide-ecb-windows and
+;;; ;;; ecb-show-ecb-windows functions
+;;; ;;; since they hide/deactive ecb but not restore the old windows for me
+(defun tmtxt/ecb-deactivate ()
+  "deactive ecb and then split emacs into 2 windows that contain 2 most recent buffers"
+  (interactive)
+  (ecb-deactivate)
+  (split-window-right)
+  (switch-to-next-buffer)
+  (other-window 1))
+(defun tmtxt/ecb-hide-ecb-windows ()
+    "hide ecb and then split emacs into 2 windows that contain 2 most recent buffers"
+      (interactive)
+        (ecb-hide-ecb-windows)
+	  (split-window-right)
+	    (switch-to-next-buffer)
+	      (other-window 1))
+(defun tmtxt/ecb-show-ecb-windows ()
+    "show ecb windows and then delete all other windows except the current one"
+      (interactive)
+        (ecb-show-ecb-windows)
+	  (delete-other-windows))
+
+(global-set-key (kbd "C-x C-'") 'tmtxt/ecb-deactivate)
+(global-set-key (kbd "C-;") 'tmtxt/ecb-show-ecb-windows)
+(global-set-key (kbd "C-'") 'tmtxt/ecb-hide-ecb-windows)
