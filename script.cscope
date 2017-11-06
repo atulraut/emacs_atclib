@@ -1,0 +1,24 @@
+#!/bin/bash
+find . -name "*.h" -print >cscope.files
+find . -name "*.c" -print >>cscope.files
+find . -name "*.cpp" -print >>cscope.files
+find . -name "*.hpp" -print >>cscope.files
+find . -name "*.xml" -print >>cscope.files
+find . -name "*.ini" -print >>cscope.files
+find . -name "*.cmd" -print >>cscope.files
+find . -name "*.java" -print >>cscope.files
+find . -name "*.mk" -print >>cscope.files
+#/home/narsi/bin/ctags -L cscope.files
+
+OS=`uname`
+
+if [ $OS = Linux ]; then
+        echo $OS
+        ctags=/usr/bin/ctags
+else
+        ctags=/home/narsi/bin/ctags
+fi
+
+#$ctags -L cscope.files
+export EDITOR=vim
+
