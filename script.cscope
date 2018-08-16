@@ -16,7 +16,7 @@ if [ $OS = Linux ]; then
         echo $OS
         ctags=/usr/bin/ctags
 else
-        ctags=/home/narsi/bin/ctags
+        ctags=/home/atul/bin/ctags
 fi
 
 #$ctags -L cscope.files
