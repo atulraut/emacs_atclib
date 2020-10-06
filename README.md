@@ -22,3 +22,5 @@ cscope -d
 
 # Ref :
 https://techtooltip.wordpress.com/2012/01/06/how-to-integrate-emacs-cscope-to-browse-linux-kernel-source-code/ 
+
+http://martinezjavier.blogspot.com/2011/07/emacs-configuration-for-linux-kernel.html
